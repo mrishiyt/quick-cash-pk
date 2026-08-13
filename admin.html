@@ -8,20 +8,23 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         body { background-color: #121212; color: #ffffff; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; }
-        h1 { text-align: center; color: #00e676; margin-bottom: 20px; }
+        h1, h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
         
-        /* Login Box */
-        .login-box { background: #1e1e1e; padding: 30px; border-radius: 10px; max-width: 400px; margin: 50px auto; text-align: center; border: 1px solid #333; }
+        /* Layout */
+        .hidden { display: none; }
+        .box { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
+        
+        /* Inputs & Buttons */
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 16px; outline: none; }
         button { width: 100%; padding: 12px; background: #00e676; color: #000; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; }
         button:hover { background: #00c853; }
+        .btn-blue { background: #2196f3; color: white; }
+        .btn-blue:hover { background: #1976d2; }
+        .btn-orange { background: #ff9800; color: white; }
+        .btn-orange:hover { background: #f57c00; }
 
-        /* Dashboard */
-        .hidden { display: none; }
-        .header-bar { display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        
-        /* Requests Table / Cards */
-        .request-card { background: #1e1e1e; border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        /* Requests Cards */
+        .request-card { background: #2a2a2a; border: 1px solid #444; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .req-info p { margin: 4px 0; font-size: 14px; color: #ccc; }
         .req-info strong { color: #fff; }
         .badge { background: #ff9800; color: #000; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
@@ -29,13 +32,11 @@
         .badge.rejected { background: #f44336; color: #fff; }
 
         .action-btns { display: flex; gap: 10px; }
-        .btn-approve { background: #4caf50; color: white; padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-reject { background: #f44336; color: white; padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-approve:hover { background: #388e3c; }
-        .btn-reject:hover { background: #d32f2f; }
+        .btn-approve { background: #4caf50; color: white; padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; width: auto;}
+        .btn-reject { background: #f44336; color: white; padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; width: auto;}
     </style>
 
-    <!-- Firebase SDK (Compat Version) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
@@ -43,24 +44,48 @@
 
     <div class="container">
         
-        <!-- ADMIN LOGIN FORM -->
-        <div id="loginSection" class="login-box">
+        <!-- LOGIN -->
+        <div id="loginSection" class="box" style="max-width: 400px; margin: 50px auto;">
             <h2>👑 Admin Login</h2>
-            <p style="color: #aaa; margin-top: 5px; font-size: 14px;">Secret Passcode Daalein</p>
-            <input type="password" id="adminPass" placeholder="Admin Passcode">
+            <input type="password" id="adminPass" placeholder="Admin Passcode (ADMIN786)">
             <button onclick="checkAdminPass()">Login Panel</button>
         </div>
 
-        <!-- ADMIN DASHBOARD -->
+        <!-- DASHBOARD -->
         <div id="dashboardSection" class="hidden">
-            <div class="header-bar">
-                <h2>📋 Pending Withdrawal Requests</h2>
-                <button onclick="location.reload()" style="width: auto; padding: 8px 15px;">🔄 Refresh</button>
+            
+            <!-- SECT 1: WITHDRAWALS -->
+            <div class="box">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin:0;">📋 Pending Withdrawals</h2>
+                    <button onclick="loadWithdrawals()" style="width: auto; padding: 8px 15px; margin:0;">🔄 Refresh</button>
+                </div>
+                <div id="requestsList" style="margin-top: 20px;">
+                    <p style="text-align: center; color: #888;">Requests load ho rahi hain...</p>
+                </div>
             </div>
 
-            <div id="requestsList">
-                <p style="text-align: center; color: #888;">Requests load ho rahi hain...</p>
+            <!-- SECT 2: USER MANAGEMENT (ADD POINTS/ADS) -->
+            <div class="box">
+                <h2>👤 User Manager (Testing)</h2>
+                <p style="color:#aaa; font-size:14px; text-align:center;">Yahan se kisi bhi user ke points aur ads khud set karein</p>
+                
+                <input type="text" id="searchUsername" placeholder="User ka naam likhein (e.g. testuser)">
+                <button class="btn-blue" onclick="findUser()">🔍 Find User</button>
+
+                <div id="editUserSection" class="hidden" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #444;">
+                    <p style="color: #00e676; font-size: 18px; margin-bottom: 10px;">User Found: <strong id="displayUser"></strong></p>
+                    
+                    <label style="color:#aaa; font-size:14px;">Balance (App PKR):</label>
+                    <input type="number" id="editBalance">
+                    
+                    <label style="color:#aaa; font-size:14px;">Ads Watched (Max 10):</label>
+                    <input type="number" id="editAds">
+                    
+                    <button class="btn-orange" onclick="updateUserData()">⚙️ Update User Data</button>
+                </div>
             </div>
+
         </div>
 
     </div>
@@ -75,13 +100,12 @@
             messagingSenderId: "506832360758",
             appId: "1:506832360758:web:2fa52e7df9a1f99793cf97"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
-        // Secret Admin Passcode (Isko badal bhi sakte hain)
         const ADMIN_PASSCODE = "ADMIN786";
+        let currentEditingUser = "";
 
+        // Login Logic
         function checkAdminPass() {
             const pass = document.getElementById('adminPass').value.trim();
             if (pass === ADMIN_PASSCODE) {
@@ -93,89 +117,99 @@
             }
         }
 
-        // Load Withdrawal Requests from Firestore
+        // ---------- WITHDRAWAL LOGIC ----------
         function loadWithdrawals() {
             const listDiv = document.getElementById('requestsList');
-            
             db.collection("withdrawals").onSnapshot((snapshot) => {
                 listDiv.innerHTML = "";
-                
                 if (snapshot.empty) {
                     listDiv.innerHTML = "<p style='text-align:center; color:#aaa;'>Koi withdrawal request nahi hai.</p>";
                     return;
                 }
-
                 snapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    const docId = doc.id;
-
                     const statusClass = data.status === 'Completed' ? 'completed' : (data.status === 'Rejected' ? 'rejected' : '');
                     
                     let actionButtons = '';
                     if (data.status === 'Pending') {
                         actionButtons = `
                             <div class="action-btns">
-                                <button class="btn-approve" onclick="approveRequest('${docId}')">Approve</button>
-                                <button class="btn-reject" onclick="rejectRequest('${docId}', '${data.username}', ${data.appPoints})">Reject</button>
+                                <button class="btn-approve" onclick="approveRequest('${doc.id}')">Approve</button>
+                                <button class="btn-reject" onclick="rejectRequest('${doc.id}', '${data.username}', ${data.appPoints})">Reject</button>
                             </div>
                         `;
                     }
-
-                    const cardHTML = `
+                    listDiv.innerHTML += `
                         <div class="request-card">
                             <div class="req-info">
                                 <p><strong>User:</strong> ${data.username} <span class="badge ${statusClass}">${data.status}</span></p>
-                                <p><strong>Method:</strong> ${data.method}</p>
-                                <p><strong>Title:</strong> ${data.accountName}</p>
-                                <p><strong>Number:</strong> <span style="color:#00e676; font-size:16px; font-weight:bold;">${data.accountNumber}</span></p>
-                                <p><strong>Amount:</strong> ${data.pkrAmount} PKR (${data.appPoints} App Points)</p>
-                                <p><small style="color:#666;">Date: ${data.date || 'N/A'}</small></p>
+                                <p><strong>Method:</strong> ${data.method} - <strong>Acc:</strong> ${data.accountNumber}</p>
+                                <p><strong>Amount:</strong> ${data.pkrAmount} PKR</p>
                             </div>
                             ${actionButtons}
                         </div>
                     `;
-                    listDiv.innerHTML += cardHTML;
                 });
             });
         }
 
-        // Approve Request Function
         async function approveRequest(docId) {
-            if (confirm("Kya aap ne is user ko paise bhej diye hain aur request Approve karna chahte hain?")) {
-                try {
-                    await db.collection("withdrawals").doc(docId).update({
-                        status: "Completed"
-                    });
-                    alert("Request Successful Approve ho gayi!");
-                } catch (error) {
-                    alert("Error: " + error.message);
+            if (confirm("Approve karein? User ko popup chala jayega.")) {
+                await db.collection("withdrawals").doc(docId).update({ status: "Completed" });
+            }
+        }
+
+        async function rejectRequest(docId, username, appPoints) {
+            if (confirm("Reject karein? Points refund ho jayenge.")) {
+                await db.collection("withdrawals").doc(docId).update({ status: "Rejected" });
+                const userRef = db.collection("users").doc(username);
+                const userDoc = await userRef.get();
+                if (userDoc.exists) {
+                    await userRef.update({ balance: userDoc.data().balance + appPoints });
                 }
             }
         }
 
-        // Reject Request Function (Refunds App Points back to user)
-        async function rejectRequest(docId, username, appPoints) {
-            if (confirm("Request Reject karne par user ke points uske account mein wapas chale jayenge. Continue karein?")) {
-                try {
-                    // Update status to Rejected
-                    await db.collection("withdrawals").doc(docId).update({
-                        status: "Rejected"
-                    });
+        // ---------- USER MANAGER LOGIC ----------
+        async function findUser() {
+            const username = document.getElementById('searchUsername').value.trim().toLowerCase();
+            if (!username) { alert("Username likhein!"); return; }
 
-                    // Refund balance back to user
-                    const userRef = db.collection("users").doc(username);
-                    const userDoc = await userRef.get();
-                    if (userDoc.exists) {
-                        const currentBal = userDoc.data().balance || 0;
-                        await userRef.update({
-                            balance: currentBal + appPoints
-                        });
-                    }
-
-                    alert("Request Reject kar di gayi aur Points user ko refund ho gaye!");
-                } catch (error) {
-                    alert("Error: " + error.message);
+            try {
+                const userDoc = await db.collection("users").doc(username).get();
+                if (!userDoc.exists) {
+                    alert("User nahi mila! Spelling check karein.");
+                    return;
                 }
+                
+                const data = userDoc.data();
+                currentEditingUser = username;
+                document.getElementById('displayUser').innerText = username;
+                document.getElementById('editBalance').value = data.balance;
+                document.getElementById('editAds').value = data.adsWatched;
+                
+                document.getElementById('editUserSection').classList.remove('hidden');
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+
+        async function updateUserData() {
+            if (!currentEditingUser) return;
+            
+            const newBal = parseInt(document.getElementById('editBalance').value);
+            const newAds = parseInt(document.getElementById('editAds').value);
+
+            try {
+                await db.collection("users").doc(currentEditingUser).update({
+                    balance: newBal,
+                    adsWatched: newAds
+                });
+                alert(currentEditingUser + " ka data update ho gaya hai!");
+                document.getElementById('editUserSection').classList.add('hidden');
+                document.getElementById('searchUsername').value = "";
+            } catch (error) {
+                alert("Update Error: " + error.message);
             }
         }
     </script>
