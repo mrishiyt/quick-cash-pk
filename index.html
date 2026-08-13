@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Earn Cash App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Main Mobile Container -->
+    <div class="mobile-card">
+        
+        <!-- Header -->
+        <div class="header">
+            <h2>💰 Quick Cash PK</h2>
+            <p>Register karein aur 380 App PKR bonus payein!</p>
+        </div>
+
+        <!-- Auth Tabs -->
+        <div class="tab-buttons">
+            <button id="loginTabBtn" class="active" onclick="switchTab('login')">Login</button>
+            <button id="registerTabBtn" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="form-box">
+            <h3>Login Account</h3>
+            <input type="text" id="loginUser" placeholder="Username / Mobile No">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button class="main-btn">Login Karein</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="form-box hidden">
+            <h3>Naya Account Banayein</h3>
+            <input type="text" id="regUser" placeholder="Apna Naam">
+            <input type="password" id="regPass" placeholder="Password Set Karein">
+            <input type="text" id="regRef" placeholder="Referral Code (Lazmi)">
+            <p class="bonus-tag">🎁 Signup Bonus: 380 App PKR (19 PKR Cash)</p>
+            <button class="main-btn">Register (380 PKR Bonus)</button>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
