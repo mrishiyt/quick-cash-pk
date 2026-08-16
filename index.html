@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Cash PK - Earn Real Money</title>
+    
+    <!-- Google Search Verification Tag -->
+    <meta name="google-site-verification" content="googlee2ba82f04159a086" />
 
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #ffffff; padding: 15px; text-align: center; }
+        .container { max-width: 480px; margin: 0 auto; background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        h1 { color: #00e676; margin-bottom: 5px; font-size: 26px; }
+        p.sub-title { color: #aaa; font-size: 14px; margin-bottom: 20px; }
+        
+        /* Auth Tabs */
+        .tab-btn { display: flex; margin-bottom: 20px; border-bottom: 2px solid #333; }
+        .tab-btn button { flex: 1; padding: 12px; background: none; border: none; color: #888; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .tab-btn button.active { color: #00e676; border-bottom: 3px solid #00e676; }
+        
+        /* Forms */
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 15px; outline: none; }
+        button.primary-btn { width: 100%; padding: 14px; background: #00e676; color: #000; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 12px; }
+        button.primary-btn:hover { background: #00c853; }
+        
+        /* Dashboard */
+        .hidden { display: none; }
+        .balance-card { background: linear-gradient(135deg, #00c853, #004d40); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .balance-card h2 { font-size: 32px; color: #fff; margin: 5px 0; }
+        .balance-card p { font-size: 14px; color: #e0f2f1; }
+        
+        /* Nav Menu */
+        .nav-menu { display: flex; justify-content: space-around; background: #2a2a2a; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
+        .nav-menu button { background: none; border: none; color: #00e676; font-size: 14px; font-weight: bold; cursor: pointer; }
+        
+        .section-box { background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #3c3c3c; margin-bottom: 15px; text-align: left; }
+        .section-box h3 { color: #00e676; margin-bottom: 10px; font-size: 18px; }
+    </style>
+
+    <!-- Firebase SDK Compat Version -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- 🟢 ADSTERRA POPUNDER AD CODE -->
+    <script src="https://pl30843215.effectivecpmnetwork.com/b8/25/73/b82573a562c66864f13465354a8739bd.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🇵🇰 Quick Cash PK</h1>
+        <p class="sub-title" id="subHeader">Daily Ads Dekhein Aur Real Cash Kamayein</p>
+
+        <!-- AUTHENTICATION SECTION -->
+        <div id="authSection">
+            <div class="tab-btn">
+                <button id="loginTabBtn" class="active" onclick="switchTab('login')">Login</button>
+                <button id="registerTabBtn" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div id="loginForm">
+                <input type="text" id="loginUser" placeholder="Username">
+                <input type="password" id="loginPass" placeholder="Password">
+                <button class="primary-btn" onclick="loginUser()">Login Karein</button>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div id="registerForm" class="hidden">
+                <input type="text" id="regUser" placeholder="Naya Username (e.g. ali123)">
+                <input type="password" id="regPass" placeholder="Password">
+                <input type="text" id="regRef" placeholder="Referral Code (Lazmi)">
+                <p style="font-size:11px; color:#aaa; margin-top:3px;">* Pehla Banda Refer Code mein <strong>ADMIN123</strong> Likhe.</p>
+                <button class="primary-btn" onclick="registerUser()">Account Banayein (+380 Bonus)</button>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD SECTION -->
+        <div id="dashboardSection" class="hidden">
+            
+            <!-- BALANCE CARD -->
+            <div class="balance-card">
+                <p>Total Balance</p>
+                <h2 id="userBalance">0 App PKR</h2>
+                <p id="cashValue">= 0 PKR Real Cash</p>
+            </div>
+
+            <!-- NAVIGATION MENU -->
+            <div class="nav-menu">
+                <button onclick="showPage('home')">🏠 Home</button>
+                <button onclick="showPage('ads')">📺 Daily Ads</button>
+                <button onclick="showPage('referral')">👥 Referrals</button>
+                <button onclick="showPage('withdraw')">💸 Withdraw</button>
+            </div>
+
+            <!-- PAGE 1: HOME -->
+            <div id="pageHome">
+                <div class="section-box">
+                    <h3>📊 Aap Ki Performance</h3>
+                    <p>Total Referrals: <strong id="totalRef" style="color:#00e676;">0</strong></p>
+                    <p>Today Ads Watched: <strong id="adProgress" style="color:#00e676;">0 / 10</strong></p>
+                </div>
+            </div>
+
+            <!-- PAGE 2: ADS -->
+            <div id="pageAds" class="hidden">
+                <div class="section-box" style="text-align: center;">
+                    <h3>📺 Daily 10 Ads</h3>
+                    <p style="color:#ccc; font-size:13px; margin-bottom:15px;">Har ad dekhne par +10 App PKR milenge.</p>
+                    <h4 id="adCountText" style="color:#00e676; margin-bottom:15px;">0 / 10 Completed</h4>
+                    
+                    <!-- 🟢 Direct Link integrated with Watch Ad Button -->
+                    <button class="primary-btn" onclick="watchAd(); openAdsterraDirectLink();">Watch Ad Now</button>
+                </div>
+            </div>
+
+            <!-- PAGE 3: REFERRAL -->
+            <div id="pageReferral" class="hidden">
+                <div class="section-box">
+                    <h3>👥 Invite & Earn</h3>
+                    <p style="color:#ccc; font-size:13px; margin-bottom:10px;">Dost ko invite karein aur har referral par <strong>+100 App PKR (= 5 PKR)</strong> haasil karein!</p>
+                    <label style="color:#aaa; font-size:12px;">Aap Ka Referral Code:</label>
+                    <input type="text" id="myRefCode" readonly style="text-align:center; font-weight:bold; color:#00e676;">
+                    <button class="primary-btn" onclick="copyRefCode()">Code Copy Karein</button>
+                </div>
+            </div>
+
+            <!-- PAGE 4: WITHDRAW -->
+            <div id="pageWithdraw" class="hidden">
+                <div class="section-box">
+                    <h3>💸 Withdrawal Form</h3>
+                    <p style="color:#aaa; font-size:12px; margin-bottom:10px;">Minimum Limit: 1,000 App PKR (= 50 Real PKR)</p>
+                    
+                    <select id="methodSelect">
+                        <option value="JazzCash">JazzCash</option>
+                        <option value="EasyPaisa">EasyPaisa</option>
+                    </select>
+
+                    <input type="text" id="accName" placeholder="Account Title (Naam)">
+                    <input type="text" id="accNumber" placeholder="Mobile Account Number">
+                    <input type="number" id="withdrawAmount" placeholder="Amount in App PKR (e.g. 1000)">
+
+                    <button class="primary-btn" onclick="requestWithdraw()">Withdraw Request Bhejen</button>
+                </div>
+
+                <!-- WITHDRAWAL HISTORY SECTION -->
+                <div class="section-box" style="margin-top:20px;">
+                    <h3>📜 Aap Ke Withdrawal Records</h3>
+                    <div id="withdrawHistoryList">
+                        <p style="color:#888; font-size:13px; text-align:center;">Records load ho rahe hain...</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="logout()" style="background:none; border:none; color:#f44336; margin-top:20px; font-weight:bold; cursor:pointer;">Logout Account</button>
+
+        </div>
+
+    </div>
+
+    <!-- 🟢 ADSTERRA DIRECT LINK TRIGGER FUNCTION -->
+    <script>
+        function openAdsterraDirectLink() {
+            window.open('https://www.effectivecpmnetwork.com/vxsyn1gf?key=bb1824245edc91b3a5947af22072a926', '_blank');
+        }
+    </script>
+
+    <!-- JavaScript Link -->
+    <script src="app.js"></script>
+</body>
+</html>
